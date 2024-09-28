@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Lab_1.Generators
 {
-    public interface IArrayGenerator<NumberType> : IGenerator<NumberType[]>
+    public interface IGenerator<OutputType>
     {
-        //NumberType[] GenerateArray(int size);
+        public OutputType Generate(int seed);
     }
 }

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab_1.ArrayAlgorithms
+namespace Lab_1.PowAlgorithms
 {
-    public interface IArrayAlgorithm<NumberType> : IAlgorithm<NumberType[]>
+    internal interface IPowAlgorithm<T, K, V>
     {
+        V Pow(T a, K b);
     }
 }

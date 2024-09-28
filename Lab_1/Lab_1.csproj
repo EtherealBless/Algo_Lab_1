@@ -21,8 +21,4 @@
     <PackageReference Include="ScottPlot.WPF" Version="5.0.39" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="MatrixAlgorithms\" />
-  </ItemGroup>
-
 </Project>

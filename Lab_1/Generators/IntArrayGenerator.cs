@@ -34,7 +34,7 @@ namespace Lab_1.Generators
          * @return array of given size
          * @throws Exception if size is too big
          */
-        public int[] GenerateArray(int size)
+        public int[] Generate(int size)
         {
             if (size > array.Length)
             {

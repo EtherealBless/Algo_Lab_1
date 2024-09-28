@@ -8,7 +8,7 @@ namespace Lab_1.Generators
 {
     public class TestArrayGenerator : IArrayGenerator<int>
     {
-        public int[] GenerateArray(int size)
+        public int[] Generate(int size)
         {
             return new int[]{
                 1, 2,

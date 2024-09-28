@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Lab_1.ArrayAlgorithms
 {
-    public class BubbleSort<T>: IArrayAlgorithm<int> where T : IComparisonOperators<T, T, bool>
+    public class BubbleSort<T>: IArrayAlgorithm<T> where T : IComparisonOperators<T, T, bool>
     {
-        public Task Execute(int[] array)
+        public Task Execute(T[] array)
         {
             for (int i = 0; i < array.Length - 1; i++)
             {

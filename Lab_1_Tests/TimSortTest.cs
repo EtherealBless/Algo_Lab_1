@@ -1,5 +1,6 @@
 using Lab_1;
 using Lab_1.ArrayAlgorithms;
+using Lab_1.Generators;
 using Newtonsoft.Json.Bson;
 
 namespace Lab_1_Tests
@@ -22,9 +23,9 @@ namespace Lab_1_Tests
         public void TestTimSort()
         {
             var arraySize = 555555;
-            var timSort = new Lab_1.ArrayAlgorithms.TimSort<int>();
+            var timSort = new TimSort<int>();
             var generator = new IntArrayGenerator(arraySize);
-            var array = generator.GenerateArray(arraySize);
+            var array = generator.Generate(arraySize);
             timSort.Execute(array);
 
             Assert.IsTrue(Util.CheckArraySorted(array));
