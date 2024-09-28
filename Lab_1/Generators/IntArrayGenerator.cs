@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab_1
+namespace Lab_1.Generators
 {
     public class IntArrayGenerator : IArrayGenerator<int>
     {
@@ -22,7 +22,8 @@ namespace Lab_1
             }
         }
 
-        public IntArrayGenerator(int maxPossibleSize = 10000) {
+        public IntArrayGenerator(int maxPossibleSize = 10000)
+        {
             array = [];
             GenerateNewArray(maxPossibleSize);
         }

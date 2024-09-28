@@ -1,11 +1,12 @@
 ﻿using Lab_1.ArrayAlgorithms;
+using Lab_1.Generators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab_1
+namespace Lab_1.Tests
 {
     class TestManager : ITestManager<int>
     {

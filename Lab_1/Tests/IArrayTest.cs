@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab_1
+namespace Lab_1.Tests
 {
     interface IArrayTest<T>
     {

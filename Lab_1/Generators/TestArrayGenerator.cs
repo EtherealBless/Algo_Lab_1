@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab_1
+namespace Lab_1.Generators
 {
-    public class TestGenerator : IArrayGenerator<int>
+    public class TestArrayGenerator : IArrayGenerator<int>
     {
         public int[] GenerateArray(int size)
         {

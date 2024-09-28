@@ -1,4 +1,5 @@
 ﻿using Lab_1.ArrayAlgorithms;
+using Lab_1.Generators;
 using System;
 using System.Collections.Generic;
 using System.Linq;

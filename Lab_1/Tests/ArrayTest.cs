@@ -6,14 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab_1
+namespace Lab_1.Tests
 {
     class ArrayTest<T> : IArrayTest<T>
     {
         public Task<double> Test(IArrayAlgorithm<T> algorithm, T[] array)
         {
             double sum = 0;
-            return Task<double>.Run(() =>
+            return Task.Run(() =>
             {
                 sum += ArrayTest<T>.TestOnce(algorithm, array);
                 //Trace.WriteLine(array.Length);
@@ -22,7 +22,7 @@ namespace Lab_1
         }
         private static double TestOnce(IArrayAlgorithm<T> algorithm, T[] array)
         {
-            var watch = new System.Diagnostics.Stopwatch();
+            var watch = new Stopwatch();
             watch.Start();
             algorithm.Execute(array).Wait();
             watch.Stop();

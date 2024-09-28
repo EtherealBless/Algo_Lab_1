@@ -1,4 +1,6 @@
 ﻿using Lab_1.ArrayAlgorithms;
+using Lab_1.Generators;
+using Lab_1.Tests;
 using ScottPlot;
 using ScottPlot.DataSources;
 using ScottPlot.Plottables;
