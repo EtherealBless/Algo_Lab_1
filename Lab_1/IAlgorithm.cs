@@ -1,7 +1,9 @@
 ﻿namespace Lab_1.ArrayAlgorithms
 {
-    public interface IAlgorithm<InputType>
+    public interface IAlgorithm<InputType> : IAlgorithm<InputType, Task> { }
+
+    public interface IAlgorithm<InputType, ReturnType>
     {
-        Task Execute(InputType data);
+        ReturnType Execute(InputType data);
     }
 }

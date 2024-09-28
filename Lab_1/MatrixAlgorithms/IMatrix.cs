@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lab_1.MatrixAlgorithms
 {
-    internal interface IMatrix<T>
+    public interface IMatrix<T>
     {
         public T this[int i, int j] { get; set; }
         public T[][] this[Range i, Range j] { get; }

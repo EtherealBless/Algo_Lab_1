@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,6 +31,19 @@ namespace Lab_1.Tests
             await foreach (var item in TestAlgorithm(algorithm, generator, count))
             {
                 yield return item;
+            }
+        }
+
+        public async IAsyncEnumerable<Point> TestAlgorithm<InputType, OutputType>(IAlgorithm<InputType, Task<OutputType>> algorithm, IGenerator<InputType> generator, int count)
+        {
+            Test<IAlgorithm<InputType, Task<OutputType>>, InputType, OutputType> test = new();
+
+            for (int i = 0; i < count; i++)
+            {
+                Point point = new(i,
+                    ((await test.RunTest(algorithm, generator.Generate(i))) as int?).Value
+                    ) ;
+                yield return point;
             }
         }
 

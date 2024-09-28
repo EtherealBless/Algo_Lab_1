@@ -23,6 +23,13 @@ namespace Lab_1.Tests
             watch.Stop();
             return watch.ElapsedTicks;
         }
+    }
 
+    internal class Test<AlgorithmType, InputType, OutputType> : ITest<AlgorithmType, InputType, OutputType> where AlgorithmType : IAlgorithm<InputType, Task<OutputType>>
+    {
+        public Task<OutputType> RunTest(AlgorithmType algorithm, InputType input)
+        {
+            return algorithm.Execute(input);
+        }
     }
 }

@@ -10,8 +10,8 @@ namespace Lab_1
 {
     public class ArrayTestConfig
     {
-        public int Iterations { get; set; }
-        public int ArraySize { get; set; }
+        public int Iterations { get; set; } = 100;
+        public int ArraySize { get; set; } = 10000;
         public IArrayGenerator<int> ArrayGenerator { get; set; } = new IntArrayGenerator();
         public IArrayAlgorithm<int> SelectedAlgorithm { get; set; } = new ConstFunction<int>();
 

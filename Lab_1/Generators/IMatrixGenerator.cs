@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lab_1.Generators
 {
-    internal interface IMatrixGenerator<NumberType>: IGenerator<Pair<IMatrix<NumberType>, IMatrix<NumberType>>>
+    public interface IMatrixGenerator<NumberType>: IGenerator<Pair<IMatrix<NumberType>, IMatrix<NumberType>>>
     {
         Pair<IMatrix<NumberType>, IMatrix<NumberType>> GenerateMatrices(int rows, int columns);
     }

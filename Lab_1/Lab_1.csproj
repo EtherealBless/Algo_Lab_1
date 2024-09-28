@@ -8,15 +8,7 @@
     <UseWPF>true</UseWPF>
     <SignAssembly>False</SignAssembly>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-  </PropertyGroup>
-
+	
   <ItemGroup>
     <PackageReference Include="ScottPlot.WPF" Version="5.0.39" />
   </ItemGroup>

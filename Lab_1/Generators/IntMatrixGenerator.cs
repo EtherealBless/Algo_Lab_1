@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace Lab_1.Generators
 {
-    internal class IntMatrixGenerator : IMatrixGenerator<int>
+    public class IntMatrixGenerator : IMatrixGenerator<int>
     {
-        private IMatrix<int> matrix;
+        private IMatrix<int> matrix = new Matrix<int>();
 
-
+        public IntMatrixGenerator() { 
+        }
         public IntMatrixGenerator(int expectedRows, int expectedColumns) {
             if (expectedColumns< 0 || expectedRows < 0)
             {
@@ -63,7 +64,7 @@ namespace Lab_1.Generators
 
         public Pair<IMatrix<int>, IMatrix<int>> Generate(int seed)
         {
-            throw new NotImplementedException();
+            return GenerateMatrices(seed, seed);
         }
     }
 }

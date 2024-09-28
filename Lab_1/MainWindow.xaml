@@ -18,56 +18,157 @@
             <TabItem Header="Массивы">
                 <Grid Background="#FFE5E5E5" Height="Auto">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="361*"/>
-                        <RowDefinition Height="240*"/>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="0*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Start" HorizontalAlignment="Left" Margin="10,78,0,0" VerticalAlignment="Top" Width="64" Click="Start" Height="64" Grid.Row="1">
-                        <Button.Background>
-                            <RadialGradientBrush>
-                                <GradientStop Color="#FF33B320" Offset="1"/>
-                                <GradientStop Color="#FF44FF2A" Offset="0"/>
-                            </RadialGradientBrush>
-                        </Button.Background>
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    <ComboBox HorizontalAlignment="Center" Margin="0,33,0,0" VerticalAlignment="Top" Width="164" Height="22"
-                              ItemsSource="{Binding ArrayTestConfig.Algorithms}" 
-                              DisplayMemberPath="Key" 
-                              SelectedValuePath="Value"
-                              SelectedValue="{Binding ArrayTestConfig.SelectedAlgorithm, UpdateSourceTrigger=PropertyChanged}"
-                              SelectedIndex="0"/>
-                    <Label Content="Алгоритм" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Height="26" Width="64"/>
-                    <Label Content="Рамер массива" HorizontalAlignment="Center" Margin="0,60,0,0" VerticalAlignment="Top" Height="26" Width="92"/>
-                    <TextBox HorizontalAlignment="Center" Margin="0,91,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="{Binding ArrayTestConfig.ArraySize, UpdateSourceTrigger=PropertyChanged}" Height="18"/>
-                    <Label Content="Количество экспериментов " HorizontalAlignment="Center" Margin="0,118,0,0" VerticalAlignment="Top" Width="164" Height="26"/>
-                    <TextBox HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="{Binding ArrayTestConfig.Iterations, UpdateSourceTrigger=PropertyChanged}" Height="18" Margin="0,149,0,0"/>
-                    <Button Content="STOP" HorizontalAlignment="Left" Margin="110,78,0,0" VerticalAlignment="Top" Width="64" Click="Stop" Height="64
-                            " Grid.Row="1">
-                        <Button.Background>
-                            <RadialGradientBrush>
-                                <GradientStop Color="#FFFF1414" Offset="0"/>
-                                <GradientStop Color="#FFC10000" Offset="1"/>
-                            </RadialGradientBrush>
-                        </Button.Background>
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
+                    <StackPanel HorizontalAlignment="Center" Margin="0,10,0,0" Orientation="Vertical" VerticalAlignment="Top">
+                        <Label Content="Алгоритм" Height="26" Width="64"/>
+                        <ComboBox Width="164" Height="22"
+                            ItemsSource="{Binding ArrayTestConfig.Algorithms}" 
+                            DisplayMemberPath="Key" 
+                            SelectedValuePath="Value"
+                            SelectedValue="{Binding ArrayTestConfig.SelectedAlgorithm, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedIndex="0"/>
+                        <Label Content="Рамер массива" Height="26" Width="92"/>
+                        <TextBox TextWrapping="Wrap" Width="120" Text="{Binding ArrayTestConfig.ArraySize, UpdateSourceTrigger=PropertyChanged}" Height="18"/>
+                        <Label Content="Количество экспериментов " Width="164" Height="26"/>
+                        <TextBox TextWrapping="Wrap" Width="120" Text="{Binding ArrayTestConfig.Iterations, UpdateSourceTrigger=PropertyChanged}" Height="18"/>
+                    </StackPanel>
+                    <StackPanel HorizontalAlignment="Center" Margin="0,0,0,40" Width="Auto" Orientation="Horizontal"  Grid.Row="1" VerticalAlignment="Top">
+
+                        <Button Content="Start" Width="64" Click="StartArrayExperiments" Height="64" Margin="0,0,30,0">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="100"/>
+                                </Style>
+                            </Button.Resources>
+                            <Button.Background>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="#FF33B320" Offset="1"/>
+                                    <GradientStop Color="#FF44FF2A" Offset="0"/>
+                                </RadialGradientBrush>
+                            </Button.Background>
+                        </Button>
+                        <Button Content="STOP" Width="64" Click="Stop" Height="64                             ">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="100"/>
+                                </Style>
+                            </Button.Resources>
+                            <Button.Background>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="#FFFF1414" Offset="0"/>
+                                    <GradientStop Color="#FFC10000" Offset="1"/>
+                                </RadialGradientBrush>
+                            </Button.Background>
+                        </Button>
+
+                    </StackPanel>
 
                 </Grid>
             </TabItem>
             <TabItem Header="Матрицы">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid Background="#FFE5E5E5" Height="Auto">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                        <Label Content="Рамер Матрицы" Height="26" Width="92"/>
+                        <TextBox TextWrapping="Wrap" Width="120" Text="{Binding MatrixTestConfig.MatrixSize, UpdateSourceTrigger=PropertyChanged}" Height="18"/>
+                        <Label Content="Количество экспериментов " Width="164" Height="26"/>
+                        <TextBox TextWrapping="Wrap" Width="120" Text="{Binding MatrixTestConfig.Iterations, UpdateSourceTrigger=PropertyChanged}" Height="18"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,40">
+                        <Button Content="Start" Width="64" Click="StartMatrixExperiments" Height="64" Margin="0,0,30,0">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="100"/>
+                                </Style>
+                            </Button.Resources>
+                            <Button.Background>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="#FF33B320" Offset="1"/>
+                                    <GradientStop Color="#FF44FF2A" Offset="0"/>
+                                </RadialGradientBrush>
+                            </Button.Background>
+                        </Button>
+                        <Button Content="STOP" Width="64" Click="Stop" Height="64                             ">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="100"/>
+                                </Style>
+                            </Button.Resources>
+                            <Button.Background>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="#FFFF1414" Offset="0"/>
+                                    <GradientStop Color="#FFC10000" Offset="1"/>
+                                </RadialGradientBrush>
+                            </Button.Background>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Степень">
+                <Grid Background="#FFE5E5E5" Height="Auto">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Background="#FFE5E5E5" Margin="0, 0, 0, 0">
+                        <Label Content="Алгоритм" Height="26" Width="64" Margin="0,10,0,0"/>
+
+                        <ComboBox Width="164" Height="22"
+                        ItemsSource="{Binding PowTestConfig.Algorithms}" 
+                        DisplayMemberPath="Key" 
+                        SelectedValuePath="Value"
+                        SelectedValue="{Binding PowTestConfig.SelectedAlgorithm, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedIndex="0"/>
+                        <Label Content="X" Height="26" Width="Auto" HorizontalAlignment="Center"/>
+                        <TextBox TextWrapping="Wrap" Width="120" Text="{Binding PowTestConfig.X, UpdateSourceTrigger=PropertyChanged}" Height="18"/>
+                        <Label Content="Максимальное N" Height="26" HorizontalAlignment="Center"/>
+                        <TextBox TextWrapping="Wrap" Width="120" Text="{Binding PowTestConfig.MaxN, UpdateSourceTrigger=PropertyChanged}" Height="18"/>
+
+                        <Label Content="Количество экспериментов " Width="164" Height="26"/>
+                        <TextBox TextWrapping="Wrap" Width="120" Text="{Binding PowTestConfig.Iterations, UpdateSourceTrigger=PropertyChanged}" Height="18"/>
+                    </StackPanel>
+                    <StackPanel HorizontalAlignment="Center" Margin="0,0,0,40" Width="Auto" Orientation="Horizontal"  Grid.Row="1" VerticalAlignment="Top">
+
+                        <Button Content="Start" Width="64" Click="StartPowExperiments" Height="64" Margin="0,0,30,0">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="100"/>
+                                </Style>
+                            </Button.Resources>
+                            <Button.Background>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="#FF33B320" Offset="1"/>
+                                    <GradientStop Color="#FF44FF2A" Offset="0"/>
+                                </RadialGradientBrush>
+                            </Button.Background>
+                        </Button>
+                        <Button Content="STOP" Width="64" Click="Stop" Height="64                             ">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="100"/>
+                                </Style>
+                            </Button.Resources>
+                            <Button.Background>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="#FFFF1414" Offset="0"/>
+                                    <GradientStop Color="#FFC10000" Offset="1"/>
+                                </RadialGradientBrush>
+                            </Button.Background>
+                        </Button>
+
+                    </StackPanel>
+
+                </Grid>
             </TabItem>
         </TabControl>
 

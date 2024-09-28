@@ -8,11 +8,16 @@ namespace Lab_1.MatrixAlgorithms
 {
     internal class Matrix<T> : IMatrix<T>
     {
-        public T[][] array { get; set; }
+        public T[][] array { get; set; } = [];
 
-        public int Rows => array.GetLength(0);
+        public int Rows => array == null ? 0 : array.GetLength(0);
 
-        public int Cols => array.GetLength(1);
+        public int Cols => Rows == 0 ? 0 : array[0].GetLength(0);
+
+        public Matrix()
+        {
+            //array = new T[0][];
+        }
 
         public Matrix(T[,] array)
         {
@@ -35,8 +40,8 @@ namespace Lab_1.MatrixAlgorithms
 
             for (int i = 0; i < array.GetLength(0); i++)
             {
-                this.array[i] = new T[array.GetLength(1)];
-                Array.Copy(array[i], this.array[i], array.GetLength(1));
+                this.array[i] = new T[array[0].GetLength(0)];
+                Array.Copy(array[i], this.array[i], array[0].GetLength(0));
             }
         }
 
