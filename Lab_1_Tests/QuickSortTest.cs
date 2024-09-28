@@ -14,8 +14,8 @@ namespace Lab_1_Tests
         [TestMethod]
         public void TestQuickSort()
         {
-            var arraySize = 5555;
-            var quickSort = new QuickSort();
+            var arraySize = 555555;
+            var quickSort = new QuickSort<int>();
             var generator = new IntArrayGenerator(arraySize);
             var array = generator.GenerateArray(arraySize);
 
