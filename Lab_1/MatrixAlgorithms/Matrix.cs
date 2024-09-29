@@ -53,7 +53,21 @@ namespace Lab_1.MatrixAlgorithms
 
         public T[][] this[Range i, Range j]
         {
-            get { return array[i][j]; }
+            get
+            {
+                int iLength = i.End.Value - i.Start.Value;
+                int jLength = j.End.Value - j.Start.Value;
+                T[][] result = new T[iLength][];
+
+                for (int k = 0; k < iLength; k++)
+                {
+                    result[k] = new T[jLength];
+
+                    Array.Copy(array[i.Start.Value + k], result[k], jLength);
+                }
+
+                return result;
+            }
         }
     }
 }
