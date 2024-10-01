@@ -28,8 +28,11 @@ namespace Lab_1.Approximation
             {typeof(MultArray<int>), new TwoParamLinear() },
             {typeof(SumArray<int>), new TwoParamLinear() },
             {typeof(Polynomial<int>), new TwoParamLinear()},
+            {typeof(BlockSort<int>), new FiveParamNLogN() },
+            {typeof(StrandSort<int>), new ThreeParamSquare() },
+            {typeof(BogoSort<int>), new FourParamCube() },
             // matrix
-            {typeof(Multiplication<int>), new ThreeParamSquare() },
+            {typeof(Multiplication<int>), new FourParamCube() },
             // pow
             {typeof(Pow<int>), new TwoParamLinear() },
             {typeof(RecPow<int>), new FiveParamLogN() },
@@ -40,15 +43,16 @@ namespace Lab_1.Approximation
         public abstract class NParameterizedFunction : DoubleParameterizedFunction
         {
             public abstract int ParametersCount { get; }
-            // public abstract string Formula { get; } = "y = {0}x^2 + {1}x + {2}";
+            public abstract string Formula { get; } // = "y = {0}*x^2 + {1}*x + {2}";
         }
 
         public class ThreeParamSquare : NParameterizedFunction
         {
             public override int ParametersCount => 3;
+            public override string Formula { get; } = "y = {0}*x^2 + {1}*x + {2}";
             public override double Evaluate(DoubleVector parameters, double x)
             {
-                if (parameters.Length != 3)
+                if (parameters.Length != ParametersCount)
                 {
                     throw new ArgumentException("Wrong number of parameters");
                 }
@@ -62,10 +66,32 @@ namespace Lab_1.Approximation
                 grad[2] = 1;
             }
         }
+
+        public class FourParamCube : NParameterizedFunction
+        {
+            public override int ParametersCount => 4;
+            public override string Formula { get; } = "y = {0}*x^3 + {1}*x^2 + {2}*x + {3}";
+            public override double Evaluate(DoubleVector parameters, double x)
+            {
+                if (parameters.Length != ParametersCount)
+                {
+                    throw new ArgumentException("Wrong number of parameters");
+                }
+                return parameters[0] * x * x * x + parameters[1] * x * x + parameters[2] * x + parameters[3];
+            }
+
+            public override void GradientWithRespectToParams(DoubleVector parameters, double x, ref DoubleVector grad)
+            {
+                grad[0] = x * x * x;
+                grad[1] = x * x;
+                grad[2] = x;
+                grad[3] = 1;
+            }
+        }
         public class FiveParamNLogN : NParameterizedFunction
         {
             public override int ParametersCount => 5;
-
+            public override string Formula { get; } = "y = {0}*x * log({1}*x + {2}, {3}) + {4}";
             public override double Evaluate(DoubleVector parameters, double x)
             {
                 if (parameters.Length != ParametersCount)
@@ -107,10 +133,10 @@ namespace Lab_1.Approximation
         public class OneParamConst : NParameterizedFunction
         {
             public override int ParametersCount => 1;
-
+            public override string Formula { get; } = "y = {0}";
             public override double Evaluate(DoubleVector parameters, double x)
             {
-                if (parameters.Length != 1)
+                if (parameters.Length != ParametersCount)
                 {
                     throw new ArgumentException("Wrong number of parameters");
                 }
@@ -127,9 +153,10 @@ namespace Lab_1.Approximation
         public class TwoParamLinear : NParameterizedFunction
         {
             public override int ParametersCount => 2;
+            public override string Formula { get; } = "y = {0}*x + {1}";
             public override double Evaluate(DoubleVector parameters, double x)
             {
-                if (parameters.Length != 2)
+                if (parameters.Length != ParametersCount)
                 {
                     throw new ArgumentException("Wrong number of parameters");
                 }
@@ -147,6 +174,7 @@ namespace Lab_1.Approximation
         public class FiveParamLogN : NParameterizedFunction
         {
             public override int ParametersCount => 5;
+            public override string Formula { get; } = "y = {0}*Log({1}*x + {2}, {3}) + {4}";
             public override double Evaluate(DoubleVector parameters, double x)
             {
                 if (parameters.Length != ParametersCount)
@@ -197,15 +225,17 @@ namespace Lab_1.Approximation
             return solution;
         }
 
-        public static DoubleVector ApproximateCoord<T, K>(IAlgorithm<T, K> algorithm, List<Coordinates> points)
+        public static DoubleVector ApproximateCoord<T, K>(IAlgorithm<T, K> algorithm, List<Coordinates> points, DoubleVector? start = null)
         {
             Trace.WriteLine($"Approximation started: {algorithm.GetType()} with {points.Count} points");
-
+            
             var function = AlgorithmsDifficulty[algorithm.GetType()] ?? throw new ArgumentException("Wrong algorithm type");
 
             var fitter = new OneVariableFunctionFitter<TrustRegionMinimizer>(function);
 
-            DoubleVector start = new(string.Join(' ', Enumerable.Repeat("0.5", function.ParametersCount).ToArray()));
+            start = (start != null && start.Length == function.ParametersCount) ? 
+                    start : 
+                    new(string.Join(' ', Enumerable.Repeat("0.5", function.ParametersCount).ToArray()));
 
             var (x, y) = points.ToLists();
 
@@ -221,6 +251,5 @@ namespace Lab_1.Approximation
 
             return solution;
         }
-
     }
 }

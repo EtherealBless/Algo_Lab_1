@@ -22,7 +22,9 @@ namespace Lab_1
             { "QuickSort", new QuickSort<int>() },
             { "BubbleSort", new BubbleSort<int>() },
             { "TimSort", new TimSort<int>() },
-            //{ "QuickPow", new QuickPow<int>() } // TODO 
+            { "BlockSort", new BlockSort<int>() },
+            { "BogoSort", new BogoSort<int> () },
+            { "StrandSort", new StrandSort<int>() },
         };
     }
 }

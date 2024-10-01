@@ -29,6 +29,10 @@ namespace Lab_1
 
         private CancellationTokenSource? _cancelTokenRun;
 
+        private List<double>? _approximationParameters = null;
+
+        private static FunctionPlot? FunctionPlot { get; set; }
+
         private bool TEST = false;
 
         public MainWindow()
@@ -47,10 +51,9 @@ namespace Lab_1
 
         private async Task RunPlotUpdate<T, K>(WpfPlot plot, int refreshRate, IAlgorithm<T, K> algorithm, List<Coordinates> source, CancellationToken token = default)
         {
-            ClearApproximation();
+            _approximationParameters = null;
             plot.Plot.Axes.SetLimitsX(0, 200);
             plot.Plot.Axes.SetLimitsY(0, 200);
-            FunctionPlot? functionPlot = null;
             var prevSourceCount = source.Count;
             while (!token.IsCancellationRequested)
             {
@@ -61,8 +64,8 @@ namespace Lab_1
                 Trace.WriteLine($"Drawing {algorithm}...");
                 lock (source)
                 {
-                    functionPlot = DrawApproximation(algorithm, source, functionPlot);
-                    functionPlot.MaxX = source.Count * 1.1;
+                    FunctionPlot = DrawApproximation(algorithm, source, FunctionPlot);
+                    FunctionPlot.MaxX = source.Count * 1.1;
 
                     plot.Plot.Axes.AutoScale();
                     plot.Refresh();
@@ -78,7 +81,9 @@ namespace Lab_1
         {
             TestManager manager = new();
             List<Coordinates> source = [];
+            MainPlot.Plot.Clear();
             MainPlot.Plot.Add.Scatter(new ScatterSourceCoordinatesList(source));
+
             FunctionPlot? functionPlot = null;
 
             CancellationTokenSource cancelTokenSourceUpdate = new();
@@ -90,9 +95,10 @@ namespace Lab_1
             await foreach (var point in manager.TestAlgorithm(
                 algorithm,
                 generator,
-                maxSize))
+                maxSize, 
+                _cancelTokenRun?.Token))
             {
-                if (n % 10 == 0 && token.IsCancellationRequested)
+                if (token.IsCancellationRequested)
                 {
                     cancelTokenSourceUpdate.Cancel();
                     return;
@@ -108,9 +114,10 @@ namespace Lab_1
                 await foreach (var point in manager.TestAlgorithm(
                     algorithm,
                     generator,
-                    maxSize))
+                    maxSize,
+                    _cancelTokenRun?.Token))
                 {
-                    if (n % 10 == 0 && token.IsCancellationRequested)
+                    if (token.IsCancellationRequested)
                     {
                         cancelTokenSourceUpdate.Cancel();
                         return;
@@ -128,22 +135,30 @@ namespace Lab_1
         private void ClearApproximation()
         {
             Trace.WriteLine($"[{nameof(ClearApproximation)}] Clearing approximation...");
+            _approximationParameters = null;
             lock (MainPlot.Plot)
             {
-                MainPlot.Plot.Remove<FunctionPlot>();
-                //Trace.WriteLine($"{MainPlot.Plot.GetPlottables()}");
-                //MainPlot.Refresh();
+                if (FunctionPlot != null)
+                    MainPlot.Plot.Remove(FunctionPlot);
             }
         }
 
         private FunctionPlot DrawApproximation<T, K>(IAlgorithm<T, K> algorithm, List<Coordinates> source, FunctionPlot? functionPlot)
         {
-            var res = ApproximateCoord(algorithm, source);
+            DoubleVector res;
+            if (_approximationParameters == null)
+            {
+                res = ApproximateCoord(algorithm, source);
+            }
+            else
+            {
+                res = ApproximateCoord(algorithm, source, new DoubleVector(_approximationParameters.ToArray()));
+            }
+            _approximationParameters = res.ToList();
             var approximationFunction = AlgorithmsDifficulty[algorithm.GetType()] ?? throw new ArgumentException("Wrong algorithm type");
-            Trace.WriteLine($"Approximation function: {approximationFunction}. Result: {res}");
             if (functionPlot != null)
             {
-                MainPlot.Plot.Remove(functionPlot);
+                ClearApproximation();
             }
             functionPlot = MainPlot.Plot.Add.Function((double x) => approximationFunction!.Evaluate(res, x));
             functionPlot.LineStyle.Width = 3;
@@ -155,9 +170,11 @@ namespace Lab_1
 
         private async Task RunCommontExperements<T, K>(IAlgorithm<T, Task<K>> algorithm, int maxSize, int iterations, IGenerator<T> generator, CancellationToken token = default)
         {
+
             TestManager manager = new();
             List<Coordinates> source = [];
-            
+            MainPlot.Plot.Clear();
+
             MainPlot.Plot.Add.Scatter(new ScatterSourceCoordinatesList(source));
 
             CancellationTokenSource cancelTokenSourceUpdate = new();
@@ -167,9 +184,10 @@ namespace Lab_1
             await foreach (var point in manager.TestAlgorithm(
                 algorithm,
                 generator,
-                maxSize))
+                maxSize,
+                _cancelTokenRun?.Token ?? default))
             {
-                if (n % 10 == 0 && token.IsCancellationRequested)
+                if (token.IsCancellationRequested)
                 {
                     cancelTokenSourceUpdate.Cancel();
                     return;
@@ -184,9 +202,10 @@ namespace Lab_1
                 await foreach (var point in manager.TestAlgorithm(
                     algorithm,
                     generator,
-                    maxSize))
+                maxSize,
+                _cancelTokenRun?.Token))
                 {
-                    if (n % 10 == 0 && token.IsCancellationRequested)
+                    if (token.IsCancellationRequested)
                     {
                         cancelTokenSourceUpdate.Cancel();
                         return;
@@ -207,9 +226,9 @@ namespace Lab_1
                 _cancelTokenRun.Cancel();
                 _cancelTokenRun.Dispose();
                 _cancelTokenRun = null;
-                MainPlot.Plot.Clear();
             }
             _cancelTokenRun = new CancellationTokenSource();
+            _cancelTokenRun.Token.ThrowIfCancellationRequested();
             return _cancelTokenRun;
 
         }
