@@ -20,22 +20,27 @@ namespace Lab_1.Approximation
 
         public static Dictionary<Type, NParameterizedFunction> AlgorithmsDifficulty = new()
         {
+            // arrays
             {typeof(BubbleSort<int>), new ThreeParamSquare() },
             {typeof(QuickSort<int>), new FiveParamNLogN() },
             {typeof(TimSort<int>), new FiveParamNLogN() },
             {typeof(ConstFunction<int>), new OneParamConst() },
             {typeof(MultArray<int>), new TwoParamLinear() },
             {typeof(SumArray<int>), new TwoParamLinear() },
+            {typeof(Polynomial<int>), new TwoParamLinear()},
+            // matrix
             {typeof(Multiplication<int>), new ThreeParamSquare() },
+            // pow
             {typeof(Pow<int>), new TwoParamLinear() },
-            {typeof(RecPow<int>), new FourParamLogN() },
-            {typeof(QuickPow<int>), new FourParamLogN() },
-            {typeof(Polynomial<int>), new TwoParamLinear()}
+            {typeof(RecPow<int>), new FiveParamLogN() },
+            {typeof(QuickPow<int>), new FiveParamLogN() },
+            {typeof(ClassicPow<int>), new FiveParamLogN() }
         };
 
         public abstract class NParameterizedFunction : DoubleParameterizedFunction
         {
             public abstract int ParametersCount { get; }
+            // public abstract string Formula { get; } = "y = {0}x^2 + {1}x + {2}";
         }
 
         public class ThreeParamSquare : NParameterizedFunction
@@ -67,7 +72,7 @@ namespace Lab_1.Approximation
                 {
                     throw new ArgumentException("Wrong number of parameters");
                 }
-                if (x*parameters[2] < 0 || parameters[1] < 0 || parameters[1] == 1)
+                if (x * parameters[2] < 0 || parameters[1] < 0 || parameters[1] == 1)
                 {
                     //throw new ArgumentException("Wrong parameters");
                     return double.NaN;
@@ -139,25 +144,37 @@ namespace Lab_1.Approximation
             }
         }
 
-        public class FourParamLogN : NParameterizedFunction
+        public class FiveParamLogN : NParameterizedFunction
         {
-            public override int ParametersCount => 4;
+            public override int ParametersCount => 5;
             public override double Evaluate(DoubleVector parameters, double x)
             {
-                if (parameters.Length != 4)
+                if (parameters.Length != ParametersCount)
                 {
                     throw new ArgumentException("Wrong number of parameters");
                 }
+                if (x * parameters[2] < 0 || parameters[1] < 0 || parameters[1] == 1)
+                {
+                    return double.NaN;
+                }
 
-                return parameters[0] * Math.Log(x * parameters[2], parameters[1]) + parameters[3];
+                return parameters[0] * Math.Log(x * parameters[2] + parameters[3], parameters[1]) + parameters[4];
             }
 
             public override void GradientWithRespectToParams(DoubleVector parameters, double x, ref DoubleVector grad)
             {
-                grad[0] = Math.Log(x * parameters[2]) / Math.Log(parameters[1]);
-                grad[1] = -parameters[0] * Math.Log(x * parameters[2]) / parameters[1] / Math.Pow(Math.Log(x * parameters[1]), 2);
-                grad[2] = parameters[0] / parameters[2] / Math.Log(parameters[1]);
-                grad[3] = 1;
+                //Log[d + c x]/Log[b]
+                grad[0] = Math.Log(x * parameters[2] + parameters[3]) / Math.Log(parameters[1]);
+                //-((a Log[d + c x])/(b Log[b]^2))
+                grad[1] = (-parameters[0] * Math.Log(x * parameters[2] + parameters[3])) / (Math.Log(parameters[1]) * Math.Log(parameters[1])) / parameters[1];
+
+                //(a x)/((d + c x) Log[b])
+                grad[2] = parameters[0] * x / ((parameters[3] + x * parameters[2]) * Math.Log(parameters[1]));
+
+                //a/((d + c x) Log[b])
+                grad[3] = parameters[0] / ((parameters[3] + x * parameters[2]) * Math.Log(parameters[1]));
+
+                grad[4] = 1;
             }
         }
 

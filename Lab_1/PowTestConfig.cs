@@ -17,10 +17,11 @@ namespace Lab_1
 
         public IPow<int> SelectedAlgorithm { get; set; } = new Pow<int>();
         public IPowGenerator PowGenerator { get; set; } = new IntPowGenerator(0);
-        public Dictionary<string, IPow<int>> Algorithms { get; set; } = new Dictionary<string, IPow<int>>() { 
+        public Dictionary<string, IPow<int>> Algorithms { get; set; } = new Dictionary<string, IPow<int>>() {
             { "Полный алгоритм", new Pow<int>() },
             { "Рекурсивный алгоритм", new RecPow<int>() },
             { "Быстрый алгоритм", new QuickPow<int>() },
+            { "Классический алгоритм", new ClassicPow<int>() },
         };
 
     }

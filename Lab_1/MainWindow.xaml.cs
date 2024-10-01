@@ -157,8 +157,9 @@ namespace Lab_1
         {
             TestManager manager = new();
             List<Coordinates> source = [];
+            
             MainPlot.Plot.Add.Scatter(new ScatterSourceCoordinatesList(source));
-            FunctionPlot? functionPlot = null;
+
             CancellationTokenSource cancelTokenSourceUpdate = new();
             var cancelTokenUpdate = cancelTokenSourceUpdate.Token;
             _ = Task.Run(async () => await RunPlotUpdate(MainPlot, 100, algorithm, source, cancelTokenUpdate), cancelTokenUpdate);
@@ -174,11 +175,6 @@ namespace Lab_1
                     return;
                 }
                 source.Add(new(point.X, point.Y));
-
-                if (n % 100 == 0)
-                {
-                    //functionPlot = DrawApproximation(source, functionPlot);
-                }
                 n++;
             }
 
