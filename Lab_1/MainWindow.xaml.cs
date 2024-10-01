@@ -29,7 +29,7 @@ namespace Lab_1
 
         private CancellationTokenSource? _cancelTokenRun;
 
-        private bool TEST = true;
+        private bool TEST = false;
 
         public MainWindow()
         {
@@ -47,10 +47,11 @@ namespace Lab_1
 
         private async Task RunPlotUpdate<T, K>(WpfPlot plot, int refreshRate, IAlgorithm<T, K> algorithm, List<Coordinates> source, CancellationToken token = default)
         {
-
+            ClearApproximation();
             plot.Plot.Axes.SetLimitsX(0, 200);
             plot.Plot.Axes.SetLimitsY(0, 200);
             FunctionPlot? functionPlot = null;
+            var prevSourceCount = source.Count;
             while (!token.IsCancellationRequested)
             {
                 await Task.Delay(refreshRate, CancellationToken.None);
@@ -58,10 +59,14 @@ namespace Lab_1
                 //plot.Plot.Axes.SetLimitsX(0, maxX);
                 ////plot.Plot.Axes.SetLimitsY(0, limits.Top);
                 Trace.WriteLine($"Drawing {algorithm}...");
-                lock (source) { 
-                functionPlot = DrawApproximation(algorithm, source, functionPlot);
-                plot.Plot.Axes.AutoScale();
-                plot.Refresh();
+                lock (source)
+                {
+                    functionPlot = DrawApproximation(algorithm, source, functionPlot);
+                    functionPlot.MaxX = source.Count * 1.1;
+
+                    plot.Plot.Axes.AutoScale();
+                    plot.Refresh();
+                    prevSourceCount = source.Count;
                 }
 
                 Trace.WriteLine($"Done");
@@ -78,6 +83,7 @@ namespace Lab_1
 
             CancellationTokenSource cancelTokenSourceUpdate = new();
             var cancelTokenUpdate = cancelTokenSourceUpdate.Token;
+
             _ = Task.Run(async () => await RunPlotUpdate(MainPlot, 100, algorithm, source, cancelTokenUpdate), cancelTokenUpdate);
 
             int n = 0;
@@ -119,6 +125,17 @@ namespace Lab_1
 
         }
 
+        private void ClearApproximation()
+        {
+            Trace.WriteLine($"[{nameof(ClearApproximation)}] Clearing approximation...");
+            lock (MainPlot.Plot)
+            {
+                MainPlot.Plot.Remove<FunctionPlot>();
+                //Trace.WriteLine($"{MainPlot.Plot.GetPlottables()}");
+                //MainPlot.Refresh();
+            }
+        }
+
         private FunctionPlot DrawApproximation<T, K>(IAlgorithm<T, K> algorithm, List<Coordinates> source, FunctionPlot? functionPlot)
         {
             var res = ApproximateCoord(algorithm, source);
@@ -126,12 +143,11 @@ namespace Lab_1
             Trace.WriteLine($"Approximation function: {approximationFunction}. Result: {res}");
             if (functionPlot != null)
             {
-
                 MainPlot.Plot.Remove(functionPlot);
             }
             functionPlot = MainPlot.Plot.Add.Function((double x) => approximationFunction!.Evaluate(res, x));
             functionPlot.LineStyle.Width = 3;
-            functionPlot.LineColor = Color.FromColor(System.Drawing.Color.Orange);
+            functionPlot.LineColor = Color.FromColor(System.Drawing.Color.OrangeRed);
             functionPlot.MinX = 0;
             functionPlot.MaxX = source.Count;
             return functionPlot;

@@ -21,8 +21,8 @@ namespace Lab_1.Approximation
         public static Dictionary<Type, NParameterizedFunction> AlgorithmsDifficulty = new()
         {
             {typeof(BubbleSort<int>), new ThreeParamSquare() },
-            {typeof(QuickSort<int>), new FourParamNLogN() },
-            {typeof(TimSort<int>), new FourParamNLogN() },
+            {typeof(QuickSort<int>), new FiveParamNLogN() },
+            {typeof(TimSort<int>), new FiveParamNLogN() },
             {typeof(ConstFunction<int>), new OneParamConst() },
             {typeof(MultArray<int>), new TwoParamLinear() },
             {typeof(SumArray<int>), new TwoParamLinear() },
@@ -57,9 +57,9 @@ namespace Lab_1.Approximation
                 grad[2] = 1;
             }
         }
-        public class FourParamNLogN : NParameterizedFunction
+        public class FiveParamNLogN : NParameterizedFunction
         {
-            public override int ParametersCount => 1;
+            public override int ParametersCount => 5;
 
             public override double Evaluate(DoubleVector parameters, double x)
             {
@@ -67,15 +67,35 @@ namespace Lab_1.Approximation
                 {
                     throw new ArgumentException("Wrong number of parameters");
                 }
-                Trace.WriteLine($"Evaluate: {NMathFunctions.Log(parameters[0] * x)}");
-
-                return parameters[0] * NMathFunctions.Log(x);
+                if (x*parameters[2] < 0 || parameters[1] < 0 || parameters[1] == 1)
+                {
+                    //throw new ArgumentException("Wrong parameters");
+                    return double.NaN;
+                }
+                // a * log(cx+d, b) + f
+                return parameters[0] * x * Math.Log(parameters[1] * x + parameters[2], parameters[3]) + parameters[4];
             }
 
+            // 0 - a
+            // 1 - b
+            // 2 - c
+            // 3 - d
+            // 4 - f
             public override void GradientWithRespectToParams(DoubleVector parameters, double x, ref DoubleVector grad)
             {
-                grad[0] = NMathFunctions.Log(x);
-                Trace.WriteLine($"Gradient: {grad}");
+                //Log[d + c x]/Log[b]
+                grad[0] = x * Math.Log(parameters[2] * x + parameters[3]) / Math.Log(parameters[1]);
+
+                //-((a Log[d + c x])/(b Log[b]^2))
+                grad[1] = (-parameters[0] * x * Math.Log(parameters[2] * x + parameters[3])) / (Math.Log(parameters[1]) * Math.Log(parameters[1])) / parameters[1];
+
+                //(a x)/((d + c x) Log[b])
+                grad[2] = parameters[0] * x * x / ((parameters[3] + parameters[2] * x) * Math.Log(parameters[1]));
+
+                //a/((d + c x) Log[b])
+                grad[3] = parameters[0] * x / ((parameters[3] + parameters[2] * x) * Math.Log(parameters[1]));
+
+                grad[4] = 1;
             }
         }
 
@@ -168,9 +188,15 @@ namespace Lab_1.Approximation
 
             var fitter = new OneVariableFunctionFitter<TrustRegionMinimizer>(function);
 
-            DoubleVector start = new(string.Join(' ', Enumerable.Repeat("1,1", function.ParametersCount).ToArray()));
+            DoubleVector start = new(string.Join(' ', Enumerable.Repeat("0.5", function.ParametersCount).ToArray()));
 
             var (x, y) = points.ToLists();
+
+            //if (x[0] == 0)
+            //{
+            //    x = x.Skip(1).ToList();
+            //    y = y.Skip(1).ToList();
+            //}
 
             DoubleVector solution = fitter.Fit(new DoubleVector(x.ToArray()), new DoubleVector(y.ToArray()), start);
 
