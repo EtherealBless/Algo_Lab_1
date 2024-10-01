@@ -9,8 +9,10 @@ using ScottPlot;
 using ScottPlot.DataSources;
 using ScottPlot.Plottables;
 using ScottPlot.WPF;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using static Lab_1.Approximation.Approximator;
 using Point = Lab_1.Utils.Point;
@@ -20,7 +22,7 @@ namespace Lab_1
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         public ArrayTestConfig ArrayTestConfig { get; set; } = new();
         public MatrixTestConfig MatrixTestConfig { get; set; } = new();
@@ -30,10 +32,30 @@ namespace Lab_1
         private CancellationTokenSource? _cancelTokenRun;
 
         private List<double>? _approximationParameters = null;
+              public event PropertyChangedEventHandler PropertyChanged;
 
         private static FunctionPlot? FunctionPlot { get; set; }
 
+        private string _functionName = "";
+        public string FunctionName
+        {
+            get
+            {
+                return _functionName;
+            }
+            set
+            {
+                _functionName = value;
+                NotifyPropertyChanged();
+            }
+        }
         private bool TEST = false;
+        protected virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public MainWindow()
         {
@@ -95,7 +117,7 @@ namespace Lab_1
             await foreach (var point in manager.TestAlgorithm(
                 algorithm,
                 generator,
-                maxSize, 
+                maxSize,
                 _cancelTokenRun?.Token))
             {
                 if (token.IsCancellationRequested)
@@ -160,11 +182,16 @@ namespace Lab_1
             {
                 ClearApproximation();
             }
+            FunctionName = string.Format(AlgorithmsDifficulty[algorithm.GetType()].Formula, (Object[])[.. res]);
+
             functionPlot = MainPlot.Plot.Add.Function((double x) => approximationFunction!.Evaluate(res, x));
             functionPlot.LineStyle.Width = 3;
             functionPlot.LineColor = Color.FromColor(System.Drawing.Color.OrangeRed);
             functionPlot.MinX = 0;
             functionPlot.MaxX = source.Count;
+
+
+
             return functionPlot;
         }
 

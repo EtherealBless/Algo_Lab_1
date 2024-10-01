@@ -43,13 +43,13 @@ namespace Lab_1.Approximation
         public abstract class NParameterizedFunction : DoubleParameterizedFunction
         {
             public abstract int ParametersCount { get; }
-            public abstract string Formula { get; } // = "y = {0}*x^2 + {1}*x + {2}";
+            public abstract string Formula { get; } // = "y = {0:N}*x^2 + {1:N}*x + {2:N}";
         }
 
         public class ThreeParamSquare : NParameterizedFunction
         {
             public override int ParametersCount => 3;
-            public override string Formula { get; } = "y = {0}*x^2 + {1}*x + {2}";
+            public override string Formula { get; } = "y = {0:N}*x^2 + {1:N}*x + {2:N}";
             public override double Evaluate(DoubleVector parameters, double x)
             {
                 if (parameters.Length != ParametersCount)
@@ -70,7 +70,7 @@ namespace Lab_1.Approximation
         public class FourParamCube : NParameterizedFunction
         {
             public override int ParametersCount => 4;
-            public override string Formula { get; } = "y = {0}*x^3 + {1}*x^2 + {2}*x + {3}";
+            public override string Formula { get; } = "y = {0:N}*x^3 + {1:N}*x^2 + {2:N}*x + {3:N}";
             public override double Evaluate(DoubleVector parameters, double x)
             {
                 if (parameters.Length != ParametersCount)
@@ -91,7 +91,7 @@ namespace Lab_1.Approximation
         public class FiveParamNLogN : NParameterizedFunction
         {
             public override int ParametersCount => 5;
-            public override string Formula { get; } = "y = {0}*x * log({1}*x + {2}, {3}) + {4}";
+            public override string Formula { get; } = "y = {0:N}*x * log({1:N}*x + {2:N}, {3:N}) + {4:N}";
             public override double Evaluate(DoubleVector parameters, double x)
             {
                 if (parameters.Length != ParametersCount)
@@ -133,7 +133,7 @@ namespace Lab_1.Approximation
         public class OneParamConst : NParameterizedFunction
         {
             public override int ParametersCount => 1;
-            public override string Formula { get; } = "y = {0}";
+            public override string Formula { get; } = "y = {0:N}";
             public override double Evaluate(DoubleVector parameters, double x)
             {
                 if (parameters.Length != ParametersCount)
@@ -153,7 +153,7 @@ namespace Lab_1.Approximation
         public class TwoParamLinear : NParameterizedFunction
         {
             public override int ParametersCount => 2;
-            public override string Formula { get; } = "y = {0}*x + {1}";
+            public override string Formula { get; } = "y = {0:N}*x + {1:N}";
             public override double Evaluate(DoubleVector parameters, double x)
             {
                 if (parameters.Length != ParametersCount)
@@ -174,7 +174,7 @@ namespace Lab_1.Approximation
         public class FiveParamLogN : NParameterizedFunction
         {
             public override int ParametersCount => 5;
-            public override string Formula { get; } = "y = {0}*Log({1}*x + {2}, {3}) + {4}";
+            public override string Formula { get; } = "y = {0:N}*Log({1:N}*x + {2:N}, {3:N}) + {4:N}";
             public override double Evaluate(DoubleVector parameters, double x)
             {
                 if (parameters.Length != ParametersCount)

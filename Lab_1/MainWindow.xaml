@@ -9,12 +9,26 @@
         Title="MainWindow" Height="650" Width="800"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         >
-    <Grid Height="650" VerticalAlignment="Top">
+    <Grid Height="Auto" VerticalAlignment="Stretch">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="570"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" MinHeight="40"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Column="1" BorderThickness="1" HorizontalAlignment="Left" Height="Auto" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="570">
 
-        <Border BorderThickness="1" HorizontalAlignment="Left" Height="414" Margin="10,0,0,0" VerticalAlignment="Center" Width="568">
-            <ScottPlot:WpfPlot x:Name="MainPlot" />
-        </Border>
-        <TabControl Margin="597,0,0,10">
+                <ScottPlot:WpfPlot x:Name="MainPlot" />
+            </Border>
+
+            <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center" Height="Auto" VerticalAlignment="Center" Width="Auto">
+                <Label Content="{Binding Path=FunctionName, UpdateSourceTrigger=PropertyChanged}" Height="Auto" VerticalAlignment="Bottom" HorizontalAlignment="Center" Width="Auto"/>
+            </Border>
+        </Grid>
+        <TabControl  Grid.Column="2" >
             <TabItem Header="Массивы">
                 <Grid Background="#FFE5E5E5" Height="Auto">
                     <Grid.RowDefinitions>
@@ -171,6 +185,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
+
 
 
     </Grid>
