@@ -19,5 +19,11 @@ namespace Lab_1.Utils
 
         public T? First { get; set; }
         public K? Second { get; set; }
+
+        internal void Deconstruct(out T x, out K y)
+        {
+            x = First;
+            y = Second;
+        }
     }
 }

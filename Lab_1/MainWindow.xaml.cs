@@ -1,23 +1,19 @@
-﻿using Lab_1.ArrayAlgorithms;
+﻿using CenterSpace.NMath.Core;
+using Lab_1.Approximation;
+using Lab_1.ArrayAlgorithms;
 using Lab_1.Generators;
 using Lab_1.MatrixAlgorithms;
 using Lab_1.Tests;
+using Lab_1.Utils;
 using ScottPlot;
 using ScottPlot.DataSources;
 using ScottPlot.Plottables;
 using ScottPlot.WPF;
 using System.Diagnostics;
-using System.Drawing;
-using System.Text;
+using System.Numerics;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using static Lab_1.Approximation.Approximator;
+using Point = Lab_1.Utils.Point;
 
 namespace Lab_1
 {
@@ -33,25 +29,42 @@ namespace Lab_1
 
         private CancellationTokenSource? _cancelTokenRun;
 
+        private bool TEST = true;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            if (TEST)
+            {
+                ArrayTestConfig.Iterations = 1;
+                ArrayTestConfig.ArraySize = 100;
+                ArrayTestConfig.SelectedAlgorithm = ArrayTestConfig.Algorithms["QuickSort"];
+
+                StartArrayExperiments(null, null);
+            }
         }
 
-        private async Task RunPlotUpdate(WpfPlot plot, int refreshRate, CancellationToken token = default)
+        private async Task RunPlotUpdate<T, K>(WpfPlot plot, int refreshRate, IAlgorithm<T, K> algorithm, List<Coordinates> source, CancellationToken token = default)
         {
-            plot.Plot.Axes.SetLimitsX(0, ArrayTestConfig.ArraySize + 200);
-            plot.Plot.Axes.SetLimitsY(0, 5000);
 
+            plot.Plot.Axes.SetLimitsX(0, 200);
+            plot.Plot.Axes.SetLimitsY(0, 200);
+            FunctionPlot? functionPlot = null;
             while (!token.IsCancellationRequested)
             {
                 await Task.Delay(refreshRate, CancellationToken.None);
-                //plot.Plot.Axes.SetLimitsX(0, _maxSize + 200);
-                //plot.Plot.Axes.SetLimitsY(0, 5000);
+                //var limits = plot.Plot.Axes.GetLimits();
+                //plot.Plot.Axes.SetLimitsX(0, maxX);
+                ////plot.Plot.Axes.SetLimitsY(0, limits.Top);
+                Trace.WriteLine($"Drawing {algorithm}...");
+                lock (source) { 
+                functionPlot = DrawApproximation(algorithm, source, functionPlot);
+                plot.Plot.Axes.AutoScale();
                 plot.Refresh();
-                MainPlot.Plot.Axes.AutoScale();
+                }
 
+                Trace.WriteLine($"Done");
             }
         }
 
@@ -61,13 +74,14 @@ namespace Lab_1
             TestManager manager = new();
             List<Coordinates> source = [];
             MainPlot.Plot.Add.Scatter(new ScatterSourceCoordinatesList(source));
-            MainPlot.Plot.Axes.SetLimitsX(0, maxSize + 200);
-            MainPlot.Plot.Axes.SetLimitsY(0, 5000);
+            FunctionPlot? functionPlot = null;
+
             CancellationTokenSource cancelTokenSourceUpdate = new();
             var cancelTokenUpdate = cancelTokenSourceUpdate.Token;
-            _ = Task.Run(async () => await RunPlotUpdate(MainPlot, 100, cancelTokenUpdate), cancelTokenUpdate);
+            _ = Task.Run(async () => await RunPlotUpdate(MainPlot, 100, algorithm, source, cancelTokenUpdate), cancelTokenUpdate);
+
             int n = 0;
-            await foreach (Point point in manager.TestAlgorithm(
+            await foreach (var point in manager.TestAlgorithm(
                 algorithm,
                 generator,
                 maxSize))
@@ -77,6 +91,7 @@ namespace Lab_1
                     cancelTokenSourceUpdate.Cancel();
                     return;
                 }
+
                 source.Add(new(point.X, point.Y));
                 n++;
             }
@@ -84,7 +99,7 @@ namespace Lab_1
             for (int i = 1; i < iterations; i++)
             {
                 n = 0;
-                await foreach (Point point in manager.TestAlgorithm(
+                await foreach (var point in manager.TestAlgorithm(
                     algorithm,
                     generator,
                     maxSize))
@@ -95,6 +110,7 @@ namespace Lab_1
                         return;
                     }
                     source[n] = new(point.X, (source[n].Y * i + point.Y) / (i + 1));
+
                     n++;
 
                 }
@@ -102,18 +118,36 @@ namespace Lab_1
             cancelTokenSourceUpdate.Cancel();
 
         }
+
+        private FunctionPlot DrawApproximation<T, K>(IAlgorithm<T, K> algorithm, List<Coordinates> source, FunctionPlot? functionPlot)
+        {
+            var res = ApproximateCoord(algorithm, source);
+            var approximationFunction = AlgorithmsDifficulty[algorithm.GetType()] ?? throw new ArgumentException("Wrong algorithm type");
+            Trace.WriteLine($"Approximation function: {approximationFunction}. Result: {res}");
+            if (functionPlot != null)
+            {
+
+                MainPlot.Plot.Remove(functionPlot);
+            }
+            functionPlot = MainPlot.Plot.Add.Function((double x) => approximationFunction!.Evaluate(res, x));
+            functionPlot.LineStyle.Width = 3;
+            functionPlot.LineColor = Color.FromColor(System.Drawing.Color.Orange);
+            functionPlot.MinX = 0;
+            functionPlot.MaxX = source.Count;
+            return functionPlot;
+        }
+
         private async Task RunCommontExperements<T, K>(IAlgorithm<T, Task<K>> algorithm, int maxSize, int iterations, IGenerator<T> generator, CancellationToken token = default)
         {
             TestManager manager = new();
             List<Coordinates> source = [];
             MainPlot.Plot.Add.Scatter(new ScatterSourceCoordinatesList(source));
-            MainPlot.Plot.Axes.SetLimitsX(0, maxSize + 200);
-            MainPlot.Plot.Axes.SetLimitsY(0, 5000);
+            FunctionPlot? functionPlot = null;
             CancellationTokenSource cancelTokenSourceUpdate = new();
             var cancelTokenUpdate = cancelTokenSourceUpdate.Token;
-            _ = Task.Run(async () => await RunPlotUpdate(MainPlot, 100, cancelTokenUpdate), cancelTokenUpdate);
+            _ = Task.Run(async () => await RunPlotUpdate(MainPlot, 100, algorithm, source, cancelTokenUpdate), cancelTokenUpdate);
             int n = 0;
-            await foreach (Point point in manager.TestAlgorithm(
+            await foreach (var point in manager.TestAlgorithm(
                 algorithm,
                 generator,
                 maxSize))
@@ -124,13 +158,18 @@ namespace Lab_1
                     return;
                 }
                 source.Add(new(point.X, point.Y));
+
+                if (n % 100 == 0)
+                {
+                    //functionPlot = DrawApproximation(source, functionPlot);
+                }
                 n++;
             }
 
             for (int i = 1; i < iterations; i++)
             {
                 n = 0;
-                await foreach (Point point in manager.TestAlgorithm(
+                await foreach (var point in manager.TestAlgorithm(
                     algorithm,
                     generator,
                     maxSize))
@@ -180,7 +219,7 @@ namespace Lab_1
 
         public async void StartMatrixExperiments(object sender, EventArgs e)
         {
-            
+
             _cancelTokenRun = ResetCancelToken();
 
             Task task = Task.Run(async () =>
