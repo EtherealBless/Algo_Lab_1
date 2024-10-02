@@ -31,6 +31,7 @@ namespace Lab_1.Approximation
             {typeof(BlockSort<int>), new FiveParamNLogN() },
             {typeof(StrandSort<int>), new ThreeParamSquare() },
             {typeof(BogoSort<int>), new FourParamCube() },
+            {typeof(HornersMethod<int>), new TwoParamLinear() },
             // matrix
             {typeof(Multiplication<int>), new FourParamCube() },
             // pow

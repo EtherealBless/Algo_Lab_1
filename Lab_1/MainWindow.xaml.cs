@@ -32,7 +32,7 @@ namespace Lab_1
         private CancellationTokenSource? _cancelTokenRun;
 
         private List<double>? _approximationParameters = null;
-              public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private static FunctionPlot? FunctionPlot { get; set; }
 
@@ -74,15 +74,31 @@ namespace Lab_1
         private async Task RunPlotUpdate<T, K>(WpfPlot plot, int refreshRate, IAlgorithm<T, K> algorithm, List<Coordinates> source, CancellationToken token = default)
         {
             _approximationParameters = null;
-            plot.Plot.Axes.SetLimitsX(0, 200);
-            plot.Plot.Axes.SetLimitsY(0, 200);
-            var prevSourceCount = source.Count;
-            while (!token.IsCancellationRequested)
+            plot.Plot.Axes.SetLimitsX(0, 1);
+            plot.Plot.Axes.SetLimitsY(0, 1);
+            try
             {
-                await Task.Delay(refreshRate, CancellationToken.None);
-                //var limits = plot.Plot.Axes.GetLimits();
-                //plot.Plot.Axes.SetLimitsX(0, maxX);
-                ////plot.Plot.Axes.SetLimitsY(0, limits.Top);
+                while (!token.IsCancellationRequested)
+                {
+                    await Task.Delay(refreshRate, CancellationToken.None);
+                    //var limits = plot.Plot.Axes.GetLimits();
+                    //plot.Plot.Axes.SetLimitsX(0, maxX);
+                    ////plot.Plot.Axes.SetLimitsY(0, limits.Top);
+                    Trace.WriteLine($"Drawing {algorithm}...");
+                    lock (source)
+                    {
+                        FunctionPlot = DrawApproximation(algorithm, source, FunctionPlot);
+                        FunctionPlot.MaxX = source.Count * 1.1;
+
+                        plot.Plot.Axes.AutoScale();
+                        plot.Refresh();
+                    }
+
+                    Trace.WriteLine($"Done");
+                }
+            }
+            catch (Exception ex)
+            {
                 Trace.WriteLine($"Drawing {algorithm}...");
                 lock (source)
                 {
@@ -91,10 +107,7 @@ namespace Lab_1
 
                     plot.Plot.Axes.AutoScale();
                     plot.Refresh();
-                    prevSourceCount = source.Count;
                 }
-
-                Trace.WriteLine($"Done");
             }
         }
 

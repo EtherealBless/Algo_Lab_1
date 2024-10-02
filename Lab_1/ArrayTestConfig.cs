@@ -25,6 +25,7 @@ namespace Lab_1
             { "BlockSort", new BlockSort<int>() },
             { "BogoSort", new BogoSort<int> () },
             { "StrandSort", new StrandSort<int>() },
+            {"HornersMethod", new HornersMethod<int>()}
         };
     }
 }
